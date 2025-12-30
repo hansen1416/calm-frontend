@@ -11,3 +11,5 @@
 		console.log(data);
 	});
 </script>
+
+<div>Home</div>
