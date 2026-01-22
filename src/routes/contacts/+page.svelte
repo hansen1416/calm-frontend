@@ -1,4 +1,13 @@
 <script>
+	import { Button } from "$lib/components/ui/button";
+	import {
+		Card,
+		CardContent,
+		CardDescription,
+		CardHeader,
+		CardTitle,
+	} from "$lib/components/ui/card";
+
 	const contacts = [
 		{
 			id: 1,
@@ -21,36 +30,47 @@
 	];
 </script>
 
-<main class="page">
-	<header class="page__header">
+<main class="contacts-page">
+	<header class="page-header">
 		<div>
 			<p class="eyebrow">Contacts</p>
 			<h1>Contact list</h1>
 			<p class="subtitle">
-				Keep track of your outreach and follow-ups in one place.
+				Manage your outreach and keep follow-ups on track.
 			</p>
 		</div>
-		<button class="primary">+ Add contact</button>
+		<Button class="add-button">+ Add contact</Button>
 	</header>
 
-	<section class="card">
-		<div class="card__header">
-			<h2>All contacts</h2>
-			<span class="count">{contacts.length} total</span>
-		</div>
-		<ul class="contact-list">
-			{#each contacts as contact}
-				<li class="contact">
-					<div class="contact__details">
-						<h3>{contact.name}</h3>
-						<p>{contact.company}</p>
-						<a href={`mailto:${contact.email}`}>{contact.email}</a>
-					</div>
-					<button class="secondary">Operation</button>
-				</li>
-			{/each}
-		</ul>
-	</section>
+	<Card>
+		<CardHeader class="card-header">
+			<div>
+				<CardTitle>All contacts</CardTitle>
+				<CardDescription
+					>{contacts.length} total contacts in this workspace.</CardDescription
+				>
+			</div>
+			<span class="count">{contacts.length}</span>
+		</CardHeader>
+		<CardContent>
+			<ul class="contact-list">
+				{#each contacts as contact}
+					<li class="contact-row">
+						<div>
+							<p class="contact-name">{contact.name}</p>
+							<p class="contact-meta">{contact.company}</p>
+							<a
+								class="contact-link"
+								href={`mailto:${contact.email}`}
+								>{contact.email}</a
+							>
+						</div>
+						<Button variant="outline" size="sm">Operation</Button>
+					</li>
+				{/each}
+			</ul>
+		</CardContent>
+	</Card>
 </main>
 
 <style>
@@ -60,12 +80,12 @@
 			system-ui,
 			-apple-system,
 			sans-serif;
-		background: #f6f7fb;
-		color: #1f2933;
+		background: #f8fafc;
+		color: #0f172a;
 	}
 
-	.page {
-		max-width: 920px;
+	.contacts-page {
+		max-width: 960px;
 		margin: 64px auto;
 		padding: 0 24px 48px;
 		display: flex;
@@ -73,7 +93,7 @@
 		gap: 32px;
 	}
 
-	.page__header {
+	.page-header {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -86,57 +106,39 @@
 		letter-spacing: 0.12em;
 		font-weight: 600;
 		font-size: 12px;
-		color: #7b8794;
+		color: #64748b;
 		margin: 0 0 8px;
 	}
 
 	h1 {
-		font-size: 32px;
 		margin: 0 0 8px;
+		font-size: 32px;
+		font-weight: 700;
 	}
 
 	.subtitle {
 		margin: 0;
-		color: #52606d;
+		color: #475569;
 	}
 
-	.primary {
-		background: #4c6fff;
-		color: #fff;
-		border: none;
-		border-radius: 999px;
-		padding: 12px 24px;
-		font-weight: 600;
-		cursor: pointer;
-		box-shadow: 0 10px 20px rgba(76, 111, 255, 0.2);
+	.add-button {
+		box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
 	}
 
-	.primary:hover {
-		background: #3c5afe;
-	}
-
-	.card {
-		background: #fff;
-		border-radius: 20px;
-		padding: 24px;
-		box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
-	}
-
-	.card__header {
+	.card-header {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		justify-content: space-between;
-		margin-bottom: 16px;
-	}
-
-	h2 {
-		margin: 0;
-		font-size: 20px;
+		gap: 16px;
 	}
 
 	.count {
-		color: #7b8794;
-		font-size: 14px;
+		align-self: center;
+		background: #e2e8f0;
+		color: #1e293b;
+		padding: 6px 12px;
+		border-radius: 999px;
+		font-weight: 600;
 	}
 
 	.contact-list {
@@ -145,50 +147,39 @@
 		padding: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 16px;
+		gap: 12px;
 	}
 
-	.contact {
+	.contact-row {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 16px 20px;
-		border: 1px solid #e4e7eb;
-		border-radius: 16px;
 		gap: 16px;
-		flex-wrap: wrap;
+		padding: 16px 18px;
+		border-radius: 16px;
+		border: 1px solid #e2e8f0;
+		background: #f8fafc;
 	}
 
-	.contact__details h3 {
-		margin: 0 0 4px;
-		font-size: 18px;
-	}
-
-	.contact__details p {
-		margin: 0 0 4px;
-		color: #52606d;
-	}
-
-	.contact__details a {
-		color: #1d4ed8;
-		text-decoration: none;
-	}
-
-	.contact__details a:hover {
-		text-decoration: underline;
-	}
-
-	.secondary {
-		border: 1px solid #4c6fff;
-		background: transparent;
-		color: #4c6fff;
-		padding: 8px 16px;
-		border-radius: 999px;
+	.contact-name {
+		margin: 0;
+		font-size: 16px;
 		font-weight: 600;
-		cursor: pointer;
 	}
 
-	.secondary:hover {
-		background: #eef2ff;
+	.contact-meta {
+		margin: 4px 0;
+		color: #64748b;
+		font-size: 14px;
+	}
+
+	.contact-link {
+		color: #2563eb;
+		text-decoration: none;
+		font-size: 14px;
+	}
+
+	.contact-link:hover {
+		text-decoration: underline;
 	}
 </style>
