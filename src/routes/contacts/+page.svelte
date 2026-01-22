@@ -7,6 +7,11 @@
 		CardHeader,
 		CardTitle,
 	} from "$lib/components/ui/card";
+	import {
+		Collapsible,
+		CollapsibleContent,
+		CollapsibleTrigger,
+	} from "$lib/components/ui/collapsible";
 
 	const contacts = [
 		{
@@ -39,7 +44,46 @@
 				Manage your outreach and keep follow-ups on track.
 			</p>
 		</div>
-		<Button class="add-button">+ Add contact</Button>
+		<Collapsible class="add-collapsible">
+			<CollapsibleTrigger class="add-trigger">
+				<Button class="add-button">+ Add contact</Button>
+			</CollapsibleTrigger>
+			<CollapsibleContent>
+				<form class="add-form">
+					<div class="form-row">
+						<label for="contact-name">Full name</label>
+						<input
+							id="contact-name"
+							name="contact-name"
+							type="text"
+							placeholder="Enter name"
+						/>
+					</div>
+					<div class="form-row">
+						<label for="contact-company">Company</label>
+						<input
+							id="contact-company"
+							name="contact-company"
+							type="text"
+							placeholder="Enter company"
+						/>
+					</div>
+					<div class="form-row">
+						<label for="contact-email">Email address</label>
+						<input
+							id="contact-email"
+							name="contact-email"
+							type="email"
+							placeholder="name@company.com"
+						/>
+					</div>
+					<div class="form-actions">
+						<Button type="submit">Save contact</Button>
+						<Button type="reset" variant="outline">Clear</Button>
+					</div>
+				</form>
+			</CollapsibleContent>
+		</Collapsible>
 	</header>
 
 	<Card>
@@ -95,7 +139,7 @@
 
 	.page-header {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		justify-content: space-between;
 		gap: 24px;
 		flex-wrap: wrap;
@@ -121,11 +165,66 @@
 		color: #475569;
 	}
 
-	.add-button {
+	:global(.add-collapsible) {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		min-width: 280px;
+	}
+
+	:global(.add-trigger) {
+		display: inline-flex;
+		justify-content: flex-end;
+	}
+
+	:global(.add-button) {
 		box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
 	}
 
-	.card-header {
+	.add-form {
+		background: #fff;
+		border-radius: 20px;
+		border: 1px solid #e2e8f0;
+		padding: 20px;
+		display: grid;
+		gap: 16px;
+		box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+	}
+
+	.form-row {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	label {
+		font-size: 13px;
+		font-weight: 600;
+		color: #475569;
+	}
+
+	input {
+		border-radius: 12px;
+		border: 1px solid #cbd5e1;
+		padding: 10px 12px;
+		font-size: 14px;
+		font-family: inherit;
+		background: #f8fafc;
+	}
+
+	input:focus {
+		outline: 2px solid #1e293b;
+		outline-offset: 1px;
+		background: #fff;
+	}
+
+	.form-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+	}
+
+	:global(.card-header) {
 		display: flex;
 		align-items: flex-start;
 		justify-content: space-between;
