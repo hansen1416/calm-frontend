@@ -13,6 +13,7 @@
 		CollapsibleContent,
 		CollapsibleTrigger,
 	} from "$lib/components/ui/collapsible";
+	import { Textarea } from "$lib/components/ui/textarea";
 	import type { Contact, PaginatedContactsResponse } from "$lib/types";
 	import { apiFetch } from "$lib/api";
 
@@ -125,13 +126,12 @@
 					</div>
 					<div class="form-row">
 						<label for="contact-description">Description</label>
-						<textarea
+						<Textarea
 							id="contact-description"
 							name="contact-description"
 							placeholder="Add a short description"
-							rows="3"
 							bind:value={formData.description}
-						></textarea>
+						/>
 					</div>
 					<div class="form-row">
 						<label for="contact-email">Email</label>
