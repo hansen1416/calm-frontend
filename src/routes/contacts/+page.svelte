@@ -43,7 +43,7 @@
 
 	const fetchContacts = async () => {
 		const response = await fetch(`/contacts`, {
-			method: "POST",
+			method: "GET",
 		});
 
 		if (!response.ok) {
@@ -59,11 +59,9 @@
 		isSaving = true;
 
 		try {
-			const response = await apiFetch("api/contacts", {
+			const res = await apiFetch(`api/contacts`, {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
+				headers: { "content-type": "application/json" },
 				body: JSON.stringify({
 					name: formData.name,
 					description: formData.description,
@@ -71,8 +69,11 @@
 				}),
 			});
 
-			if (response.ok) {
+			if (!res.ok) {
+				throw new Error(await res.text());
+			} else {
 				await fetchContacts();
+
 				formData = {
 					name: "",
 					description: "",
