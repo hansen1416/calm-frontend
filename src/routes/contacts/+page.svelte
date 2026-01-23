@@ -25,21 +25,21 @@
 		email: "",
 	};
 
-	const parseContacts = (payload) => {
-		if (Array.isArray(payload)) {
-			return payload;
-		}
+	// const parseContacts = (payload) => {
+	// 	if (Array.isArray(payload)) {
+	// 		return payload;
+	// 	}
 
-		if (payload?.data && Array.isArray(payload.data)) {
-			return payload.data;
-		}
+	// 	if (payload?.data && Array.isArray(payload.data)) {
+	// 		return payload.data;
+	// 	}
 
-		if (payload?.contacts && Array.isArray(payload.contacts)) {
-			return payload.contacts;
-		}
+	// 	if (payload?.contacts && Array.isArray(payload.contacts)) {
+	// 		return payload.contacts;
+	// 	}
 
-		return [];
-	};
+	// 	return [];
+	// };
 
 	const fetchContacts = async () => {
 		const response = await fetch(`/contacts`, {
@@ -51,7 +51,8 @@
 		}
 
 		const payload = await response.json().catch(() => null);
-		contacts = parseContacts(payload);
+
+		console.log(payload);
 	};
 
 	const handleSubmit = async (event: SubmitEvent) => {
