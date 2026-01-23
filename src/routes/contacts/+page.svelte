@@ -84,6 +84,14 @@
 	};
 
 	onMount(fetchContacts);
+
+	const onEdit = (idx: number) => {
+		console.log(idx);
+	};
+
+	const onDelete = (idx: number) => {
+		console.log(idx);
+	};
 </script>
 
 <main class="contacts-page">
@@ -158,7 +166,7 @@
 		</CardHeader>
 		<CardContent>
 			<ul class="contact-list">
-				{#each contactsResponse.data as contact}
+				{#each contactsResponse.data as contact, i}
 					<li class="contact-row">
 						<div>
 							<p class="contact-name">{contact.name}</p>
@@ -171,7 +179,22 @@
 								>{contact.email}</a
 							>
 						</div>
-						<Button variant="outline" size="sm">Operation</Button>
+						<div class="contact-actions">
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={() => onEdit(i)}
+							>
+								Edit
+							</Button>
+							<Button
+								variant="destructive"
+								size="sm"
+								onclick={() => onDelete(i)}
+							>
+								Delete
+							</Button>
+						</div>
 					</li>
 				{/each}
 			</ul>
