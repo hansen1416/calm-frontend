@@ -18,17 +18,6 @@ export type ApiResponse<T> =
     | { ok: true; data: T }
     | { ok: false; error: ApiError };
 
-export interface PaginationMeta {
-    currentPage: number;
-    perPage: number;
-    total: number;
-    lastPage: number;
-}
-
-export interface Paginated<T> {
-    data: T[];
-    meta: PaginationMeta;
-}
 
 /* ---------- core entities ---------- */
 
@@ -49,28 +38,21 @@ export interface Contact {
     updatedAt?: ISODateString;
 }
 
-/* ---------- input (client -> server) ---------- */
 
-export interface ContactCreateInput {
-    name: string;
-    email: EmailAddress;
-    description?: string;
-    tagIds?: ID[];
-}
+export type PaginatedContactsResponse = {
+    current_page: number;
+    data: Contact[];
+    // first_page_url: string;
+    from: number | null;
+    last_page: number;
+    // last_page_url: string;
+    // links: PaginationLink[];
+    // next_page_url: string | null;
+    // path: string;
+    per_page: number;
+    // prev_page_url: string | null;
+    to: number | null;
+    total: number;
+};
 
-export interface ContactUpdateInput {
-    name?: string;
-    email?: EmailAddress;
-    description?: string;
-    tagIds?: ID[];
-}
 
-/* ---------- optional: common list/query types ---------- */
-
-export interface ListQuery {
-    page?: number;
-    perPage?: number;
-    q?: string; // free-text search
-    tagId?: ID; // filter by one tag
-    sort?: string; // e.g., "createdAt:desc"
-}

@@ -13,46 +13,35 @@
 		CollapsibleContent,
 		CollapsibleTrigger,
 	} from "$lib/components/ui/collapsible";
-	import type { Contact } from "$lib/types";
+	import type { Contact, PaginatedContactsResponse } from "$lib/types";
 	import { apiFetch } from "$lib/api";
 
-	let contacts: Contact[] = [];
+	let contactsResponse: PaginatedContactsResponse = {
+		current_page: 0,
+		data: [],
+		from: 0,
+		last_page: 0,
+		per_page: 0,
+		to: 0,
+		total: 0,
+	};
 	let isSaving = false;
-	let page = 1;
 	let formData = {
 		name: "",
 		description: "",
 		email: "",
 	};
 
-	// const parseContacts = (payload) => {
-	// 	if (Array.isArray(payload)) {
-	// 		return payload;
-	// 	}
-
-	// 	if (payload?.data && Array.isArray(payload.data)) {
-	// 		return payload.data;
-	// 	}
-
-	// 	if (payload?.contacts && Array.isArray(payload.contacts)) {
-	// 		return payload.contacts;
-	// 	}
-
-	// 	return [];
-	// };
-
 	const fetchContacts = async () => {
-		const response = await fetch(`/contacts`, {
+		const res = await apiFetch(`api/contacts`, {
 			method: "GET",
 		});
 
-		if (!response.ok) {
+		if (!res.ok) {
 			return;
 		}
 
-		const payload = await response.json().catch(() => null);
-
-		console.log(payload);
+		contactsResponse = await res.json();
 	};
 
 	const handleSubmit = async (event: SubmitEvent) => {
@@ -162,14 +151,14 @@
 			<div>
 				<CardTitle>All contacts</CardTitle>
 				<CardDescription
-					>{contacts.length} total contacts in this workspace.</CardDescription
+					>{contactsResponse.total} total contacts in this workspace.</CardDescription
 				>
 			</div>
-			<span class="count">{contacts.length}</span>
+			<span class="count">{contactsResponse.total}</span>
 		</CardHeader>
 		<CardContent>
 			<ul class="contact-list">
-				{#each contacts as contact}
+				{#each contactsResponse.data as contact}
 					<li class="contact-row">
 						<div>
 							<p class="contact-name">{contact.name}</p>
