@@ -51,7 +51,7 @@
 			<CollapsibleContent>
 				<form class="add-form">
 					<div class="form-row">
-						<label for="contact-name">Full name</label>
+						<label for="contact-name">Name</label>
 						<input
 							id="contact-name"
 							name="contact-name"
@@ -60,16 +60,16 @@
 						/>
 					</div>
 					<div class="form-row">
-						<label for="contact-company">Company</label>
-						<input
-							id="contact-company"
-							name="contact-company"
-							type="text"
-							placeholder="Enter company"
-						/>
+						<label for="contact-description">Description</label>
+						<textarea
+							id="contact-description"
+							name="contact-description"
+							placeholder="Add a short description"
+							rows="3"
+						></textarea>
 					</div>
 					<div class="form-row">
-						<label for="contact-email">Email address</label>
+						<label for="contact-email">Email</label>
 						<input
 							id="contact-email"
 							name="contact-email"
@@ -203,7 +203,8 @@
 		color: #475569;
 	}
 
-	input {
+	input,
+	textarea {
 		border-radius: 12px;
 		border: 1px solid #cbd5e1;
 		padding: 10px 12px;
@@ -212,7 +213,13 @@
 		background: #f8fafc;
 	}
 
-	input:focus {
+	textarea {
+		resize: vertical;
+		min-height: 96px;
+	}
+
+	input:focus,
+	textarea:focus {
 		outline: 2px solid #1e293b;
 		outline-offset: 1px;
 		background: #fff;
