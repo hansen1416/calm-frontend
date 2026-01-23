@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from "svelte";
 	import { Button } from "$lib/components/ui/button";
 	import {
 		Card,
@@ -13,26 +14,83 @@
 		CollapsibleTrigger,
 	} from "$lib/components/ui/collapsible";
 
-	const contacts = [
-		{
-			id: 1,
-			name: "Alex Rivera",
-			company: "Nimbus Labs",
-			email: "alex@nimbuslabs.com",
-		},
-		{
-			id: 2,
-			name: "Priya Desai",
-			company: "Brightpath Studio",
-			email: "priya@brightpath.io",
-		},
-		{
-			id: 3,
-			name: "Marcus Chen",
-			company: "Harbor Works",
-			email: "marcus@harborworks.co",
-		},
-	];
+	let contacts = [];
+	let isSaving = false;
+	let page = 1;
+	let formData = {
+		name: "",
+		description: "",
+		email: "",
+	};
+
+	const parseContacts = (payload) => {
+		if (Array.isArray(payload)) {
+			return payload;
+		}
+
+		if (payload?.data && Array.isArray(payload.data)) {
+			return payload.data;
+		}
+
+		if (payload?.contacts && Array.isArray(payload.contacts)) {
+			return payload.contacts;
+		}
+
+		return [];
+	};
+
+	const fetchContacts = async () => {
+		const response = await fetch(`/contacts`, {
+			method: "POST",
+		});
+
+		if (!response.ok) {
+			return;
+		}
+
+		const payload = await response.json().catch(() => null);
+		contacts = parseContacts(payload);
+	};
+
+	const handleSubmit = async (event) => {
+		event.preventDefault();
+		isSaving = true;
+
+		try {
+			const response = await fetch("/contacts", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					name: formData.name,
+					description: formData.description,
+					email: formData.email,
+				}),
+			});
+
+			if (response.ok) {
+				await fetchContacts();
+				formData = {
+					name: "",
+					description: "",
+					email: "",
+				};
+			}
+		} finally {
+			isSaving = false;
+		}
+	};
+
+	const handleReset = () => {
+		formData = {
+			name: "",
+			description: "",
+			email: "",
+		};
+	};
+
+	onMount(fetchContacts);
 </script>
 
 <main class="contacts-page">
@@ -49,7 +107,11 @@
 				<Button class="add-button">+ Add contact</Button>
 			</CollapsibleTrigger>
 			<CollapsibleContent>
-				<form class="add-form">
+				<form
+					class="add-form"
+					on:submit={handleSubmit}
+					on:reset={handleReset}
+				>
 					<div class="form-row">
 						<label for="contact-name">Name</label>
 						<input
@@ -57,6 +119,7 @@
 							name="contact-name"
 							type="text"
 							placeholder="Enter name"
+							bind:value={formData.name}
 						/>
 					</div>
 					<div class="form-row">
@@ -66,6 +129,7 @@
 							name="contact-description"
 							placeholder="Add a short description"
 							rows="3"
+							bind:value={formData.description}
 						></textarea>
 					</div>
 					<div class="form-row">
@@ -75,10 +139,13 @@
 							name="contact-email"
 							type="email"
 							placeholder="name@company.com"
+							bind:value={formData.email}
 						/>
 					</div>
 					<div class="form-actions">
-						<Button type="submit">Save contact</Button>
+						<Button type="submit" disabled={isSaving}>
+							{isSaving ? "Saving..." : "Save contact"}
+						</Button>
 						<Button type="reset" variant="outline">Clear</Button>
 					</div>
 				</form>
@@ -102,7 +169,9 @@
 					<li class="contact-row">
 						<div>
 							<p class="contact-name">{contact.name}</p>
-							<p class="contact-meta">{contact.company}</p>
+							<p class="contact-meta">
+								{contact.company ?? contact.description}
+							</p>
 							<a
 								class="contact-link"
 								href={`mailto:${contact.email}`}
