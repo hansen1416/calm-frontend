@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from "svelte";
 	import { Button } from "$lib/components/ui/button";
 	import {
@@ -13,8 +13,10 @@
 		CollapsibleContent,
 		CollapsibleTrigger,
 	} from "$lib/components/ui/collapsible";
+	import type { Contact } from "$lib/types";
+	import { apiFetch } from "$lib/api";
 
-	let contacts = [];
+	let contacts: Contact[] = [];
 	let isSaving = false;
 	let page = 1;
 	let formData = {
@@ -52,12 +54,12 @@
 		contacts = parseContacts(payload);
 	};
 
-	const handleSubmit = async (event) => {
+	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 		isSaving = true;
 
 		try {
-			const response = await fetch("/contacts", {
+			const response = await apiFetch("api/contacts", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -169,8 +171,8 @@
 					<li class="contact-row">
 						<div>
 							<p class="contact-name">{contact.name}</p>
-							<p class="contact-meta">
-								{contact.company ?? contact.description}
+							<p class="contact-description">
+								{contact.description}
 							</p>
 							<a
 								class="contact-link"
