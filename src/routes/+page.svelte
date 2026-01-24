@@ -13,13 +13,4 @@
 	});
 </script>
 
-<nav>
-	<ul>
-		<li><a href="/">Home</a></li>
-		<li><a href="/about">About</a></li>
-		<li><a href="/campaigns/new">New Campaign</a></li>
-		<li><a href="/campaigns/1">Campaign 1</a></li>
-		<li><a href="/contacts">Contacts</a></li>
-		<li><a href="/profile">Profile</a></li>
-	</ul>
-</nav>
+<div>Home content</div>
