@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { Button } from "$lib/components/ui/button";
+	import { Button, buttonVariants } from "$lib/components/ui/button";
 	import {
 		Card,
 		CardContent,
@@ -13,9 +13,13 @@
 		CollapsibleContent,
 		CollapsibleTrigger,
 	} from "$lib/components/ui/collapsible";
+	import { Label } from "$lib/components/ui/label";
 	import { Textarea } from "$lib/components/ui/textarea";
 	import type { PaginatedContactsResponse } from "$lib/types";
 	import { apiFetch } from "$lib/api";
+
+	const inputClass =
+		"border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm";
 
 	let contactsResponse: PaginatedContactsResponse = {
 		current_page: 0,
@@ -26,7 +30,9 @@
 		to: 0,
 		total: 0,
 	};
+
 	let isSaving = false;
+
 	let formData = {
 		name: "",
 		description: "",
@@ -45,32 +51,23 @@
 		contactsResponse = await res.json();
 	};
 
-	const handleSubmit = async (event: SubmitEvent) => {
-		event.preventDefault();
+	const handleSubmit = async (e: Event) => {
+		e.preventDefault();
 		isSaving = true;
 
 		try {
 			const res = await apiFetch(`api/contacts`, {
 				method: "POST",
 				headers: { "content-type": "application/json" },
-				body: JSON.stringify({
-					name: formData.name,
-					description: formData.description,
-					email: formData.email,
-				}),
+				body: JSON.stringify(formData),
 			});
 
 			if (!res.ok) {
-				throw new Error(await res.text());
-			} else {
-				await fetchContacts();
-
-				formData = {
-					name: "",
-					description: "",
-					email: "",
-				};
+				return;
 			}
+
+			handleReset();
+			await fetchContacts();
 		} finally {
 			isSaving = false;
 		}
@@ -95,90 +92,114 @@
 	};
 </script>
 
-<main class="contacts-page">
-	<header class="page-header">
-		<div>
-			<h1>Contact list</h1>
-			<p class="subtitle">
+<main class="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6 pb-12 pt-14">
+	<header class="flex flex-wrap items-start justify-between gap-6">
+		<div class="space-y-2">
+			<h1 class="text-3xl font-semibold tracking-tight">Contact list</h1>
+			<p class="text-sm text-muted-foreground">
 				Manage your outreach and keep follow-ups on track.
 			</p>
 		</div>
-		<Collapsible class="add-collapsible">
-			<CollapsibleTrigger class="add-trigger">
-				<Button class="add-button">+ Add contact</Button>
+		<Collapsible class="w-full max-w-sm">
+			<CollapsibleTrigger
+				class={buttonVariants({
+					class: "w-full sm:w-auto",
+				})}
+			>
+				+ Add contact
 			</CollapsibleTrigger>
-			<CollapsibleContent>
-				<form
-					class="add-form"
-					on:submit={handleSubmit}
-					on:reset={handleReset}
-				>
-					<div class="form-row">
-						<label for="contact-name">Name</label>
-						<input
-							id="contact-name"
-							name="contact-name"
-							type="text"
-							placeholder="Enter name"
-							bind:value={formData.name}
-						/>
-					</div>
-					<div class="form-row">
-						<label for="contact-description">Description</label>
-						<Textarea
-							id="contact-description"
-							name="contact-description"
-							placeholder="Add a short description"
-							bind:value={formData.description}
-						/>
-					</div>
-					<div class="form-row">
-						<label for="contact-email">Email</label>
-						<input
-							id="contact-email"
-							name="contact-email"
-							type="email"
-							placeholder="name@company.com"
-							bind:value={formData.email}
-						/>
-					</div>
-					<div class="form-actions">
-						<Button type="submit" disabled={isSaving}>
-							{isSaving ? "Saving..." : "Save contact"}
-						</Button>
-						<Button type="reset" variant="outline">Clear</Button>
-					</div>
-				</form>
+			<CollapsibleContent class="pt-4">
+				<Card>
+					<CardContent class="space-y-4 p-4">
+						<form
+							class="space-y-4"
+							on:submit={handleSubmit}
+							on:reset={handleReset}
+						>
+							<div class="space-y-2">
+								<Label for="contact-name">Name</Label>
+								<input
+									id="contact-name"
+									name="contact-name"
+									type="text"
+									placeholder="Enter name"
+									class={inputClass}
+									bind:value={formData.name}
+								/>
+							</div>
+							<div class="space-y-2">
+								<Label for="contact-description"
+									>Description</Label
+								>
+								<Textarea
+									id="contact-description"
+									name="contact-description"
+									placeholder="Add a short description"
+									bind:value={formData.description}
+								/>
+							</div>
+							<div class="space-y-2">
+								<Label for="contact-email">Email</Label>
+								<input
+									id="contact-email"
+									name="contact-email"
+									type="email"
+									placeholder="name@company.com"
+									class={inputClass}
+									bind:value={formData.email}
+								/>
+							</div>
+							<div class="flex flex-wrap gap-2">
+								<Button type="submit" disabled={isSaving}>
+									{isSaving ? "Saving..." : "Save contact"}
+								</Button>
+								<Button type="reset" variant="outline">
+									Clear
+								</Button>
+							</div>
+						</form>
+					</CardContent>
+				</Card>
 			</CollapsibleContent>
 		</Collapsible>
 	</header>
 
 	<Card>
-		<CardHeader class="card-header">
-			<div>
+		<CardHeader
+			class="flex flex-row flex-wrap items-start justify-between gap-4"
+		>
+			<div class="space-y-1">
 				<CardTitle>All contacts</CardTitle>
-				<CardDescription
-					>{contactsResponse.total} total contacts in this workspace.</CardDescription
-				>
+				<CardDescription>
+					{contactsResponse.total} total contacts in this workspace.
+				</CardDescription>
 			</div>
-			<span class="count">{contactsResponse.total}</span>
+			<span
+				class="rounded-full bg-muted px-3 py-1 text-sm font-semibold text-foreground"
+			>
+				{contactsResponse.total}
+			</span>
 		</CardHeader>
 		<CardContent>
-			<ul class="contact-list">
+			<ul class="space-y-3">
 				{#each contactsResponse.data as contact, i}
-					<li class="contact-row">
-						<div>
-							<p class="contact-name">{contact.name}</p>
-							<p class="contact-description">
+					<li
+						class="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-muted px-5 py-4"
+					>
+						<div class="space-y-1">
+							<p class="text-base font-semibold">
+								{contact.name}
+							</p>
+							<p class="text-sm text-muted-foreground">
 								{contact.description}
 							</p>
 							<a
-								class="contact-link"
+								class="text-sm font-medium text-primary hover:underline"
 								href={`mailto:${contact.email}`}
 								>{contact.email}</a
 							>
 						</div>
-						<div class="contact-actions">
+						<div class="flex flex-wrap gap-2">
 							<Button
 								variant="outline"
 								size="sm"
@@ -200,167 +221,3 @@
 		</CardContent>
 	</Card>
 </main>
-
-<style>
-	:global(body) {
-		font-family:
-			"Inter",
-			system-ui,
-			-apple-system,
-			sans-serif;
-		background: #f8fafc;
-		color: #0f172a;
-	}
-
-	.contacts-page {
-		max-width: 960px;
-		margin: 64px auto;
-		padding: 0 24px 48px;
-		display: flex;
-		flex-direction: column;
-		gap: 32px;
-	}
-
-	.page-header {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: 24px;
-		flex-wrap: wrap;
-	}
-
-	h1 {
-		margin: 0 0 8px;
-		font-size: 32px;
-		font-weight: 700;
-	}
-
-	.subtitle {
-		margin: 0;
-		color: #475569;
-	}
-
-	:global(.add-collapsible) {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-		min-width: 280px;
-	}
-
-	:global(.add-trigger) {
-		display: inline-flex;
-		justify-content: flex-end;
-	}
-
-	:global(.add-button) {
-		box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
-	}
-
-	.add-form {
-		background: #fff;
-		border-radius: 20px;
-		border: 1px solid #e2e8f0;
-		padding: 20px;
-		display: grid;
-		gap: 16px;
-		box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
-	}
-
-	.form-row {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
-
-	label {
-		font-size: 13px;
-		font-weight: 600;
-		color: #475569;
-	}
-
-	input,
-	textarea {
-		border-radius: 12px;
-		border: 1px solid #cbd5e1;
-		padding: 10px 12px;
-		font-size: 14px;
-		font-family: inherit;
-		background: #f8fafc;
-	}
-
-	textarea {
-		resize: vertical;
-		min-height: 96px;
-	}
-
-	input:focus,
-	textarea:focus {
-		outline: 2px solid #1e293b;
-		outline-offset: 1px;
-		background: #fff;
-	}
-
-	.form-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 12px;
-	}
-
-	:global(.card-header) {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: 16px;
-	}
-
-	.count {
-		align-self: center;
-		background: #e2e8f0;
-		color: #1e293b;
-		padding: 6px 12px;
-		border-radius: 999px;
-		font-weight: 600;
-	}
-
-	.contact-list {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-	}
-
-	.contact-row {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 16px;
-		padding: 16px 18px;
-		border-radius: 16px;
-		border: 1px solid #e2e8f0;
-		background: #f8fafc;
-	}
-
-	.contact-name {
-		margin: 0;
-		font-size: 16px;
-		font-weight: 600;
-	}
-
-	.contact-meta {
-		margin: 4px 0;
-		color: #64748b;
-		font-size: 14px;
-	}
-
-	.contact-link {
-		color: #2563eb;
-		text-decoration: none;
-		font-size: 14px;
-	}
-
-	.contact-link:hover {
-		text-decoration: underline;
-	}
-</style>
