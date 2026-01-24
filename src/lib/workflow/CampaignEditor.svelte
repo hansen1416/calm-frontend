@@ -7,6 +7,7 @@
 		addEdge,
 	} from "@xyflow/svelte";
 	import type { Node, Edge, Connection, Viewport } from "@xyflow/svelte";
+	import { Button } from "$lib/components/ui/button";
 	import EmailNode from "$lib/workflow/nodes/EmailNode.svelte";
 	import "@xyflow/svelte/dist/style.css";
 	import { apiFetch } from "$lib/api";
@@ -89,8 +90,8 @@
 </script>
 
 <div class="toolbar">
-	<button type="button" onclick={addEmailNode}>Add Email</button>
-	<button type="button" onclick={saveGraph}>Save</button>
+	<Button onclick={addEmailNode}>Add Email</Button>
+	<Button onclick={saveGraph}>Save</Button>
 </div>
 
 <div class="canvas">

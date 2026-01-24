@@ -14,7 +14,7 @@
 		CollapsibleTrigger,
 	} from "$lib/components/ui/collapsible";
 	import { Textarea } from "$lib/components/ui/textarea";
-	import type { Contact, PaginatedContactsResponse } from "$lib/types";
+	import type { PaginatedContactsResponse } from "$lib/types";
 	import { apiFetch } from "$lib/api";
 
 	let contactsResponse: PaginatedContactsResponse = {
