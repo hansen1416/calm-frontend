@@ -1,4 +1,5 @@
 <script lang="ts">
+	import "@xyflow/svelte/dist/style.css";
 	import {
 		SvelteFlow,
 		Background,
@@ -6,10 +7,16 @@
 		MiniMap,
 		addEdge,
 	} from "@xyflow/svelte";
-	import type { Node, Edge, Connection, Viewport } from "@xyflow/svelte";
+	import type {
+		Node,
+		Edge,
+		Connection,
+		Viewport,
+		ColorMode,
+	} from "@xyflow/svelte";
 	import { Button } from "$lib/components/ui/button";
 	import EmailNode from "$lib/workflow/nodes/EmailNode.svelte";
-	import "@xyflow/svelte/dist/style.css";
+	import { mode } from "mode-watcher";
 	import { apiFetch } from "$lib/api";
 
 	const nodeTypes = { email: EmailNode };
@@ -102,6 +109,7 @@
 		{nodeTypes}
 		fitView
 		onconnect={onConnect}
+		class={mode.current === "dark" ? "dark" : ""}
 	>
 		<Background />
 		<Controls />
