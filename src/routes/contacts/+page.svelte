@@ -98,7 +98,6 @@
 <main class="contacts-page">
 	<header class="page-header">
 		<div>
-			<p class="eyebrow">Contacts</p>
 			<h1>Contact list</h1>
 			<p class="subtitle">
 				Manage your outreach and keep follow-ups on track.
@@ -228,15 +227,6 @@
 		justify-content: space-between;
 		gap: 24px;
 		flex-wrap: wrap;
-	}
-
-	.eyebrow {
-		text-transform: uppercase;
-		letter-spacing: 0.12em;
-		font-weight: 600;
-		font-size: 12px;
-		color: #64748b;
-		margin: 0 0 8px;
 	}
 
 	h1 {
