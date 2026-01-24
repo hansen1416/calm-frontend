@@ -1,6 +1,7 @@
 <script lang="ts">
 	import "./layout.css";
 	import favicon from "$lib/assets/favicon.svg";
+	import * as NavigationMenu from "$lib/components/ui/navigation-menu";
 
 	let { children } = $props();
 </script>
@@ -11,7 +12,30 @@
 	<header class="h-14 border-b flex items-center px-4">
 		<div class="font-semibold">Calm</div>
 		<div class="ml-auto flex items-center gap-2">
-			<!-- global actions -->
+			<NavigationMenu.Root>
+				<NavigationMenu.List>
+					<NavigationMenu.Item>
+						<NavigationMenu.Link href="/contacts"
+							>Contacts</NavigationMenu.Link
+						>
+					</NavigationMenu.Item>
+					<NavigationMenu.Item>
+						<NavigationMenu.Link href="/campaigns"
+							>Campaigns</NavigationMenu.Link
+						>
+					</NavigationMenu.Item>
+					<NavigationMenu.Item>
+						<NavigationMenu.Link href="/profile"
+							>Profile</NavigationMenu.Link
+						>
+					</NavigationMenu.Item>
+					<NavigationMenu.Item>
+						<NavigationMenu.Link href="/about"
+							>About</NavigationMenu.Link
+						>
+					</NavigationMenu.Item>
+				</NavigationMenu.List>
+			</NavigationMenu.Root>
 		</div>
 	</header>
 
