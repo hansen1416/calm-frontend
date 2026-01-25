@@ -15,6 +15,7 @@
 		ColorMode,
 	} from "@xyflow/svelte";
 	import { Button } from "$lib/components/ui/button";
+	import { Input } from "$lib/components/ui/input";
 	import EmailNode from "$lib/workflow/nodes/EmailNode.svelte";
 	import { mode } from "mode-watcher";
 	import { apiFetch } from "$lib/api";
@@ -27,6 +28,7 @@
 	let nodes = $state.raw<Node[]>([]);
 	let edges = $state.raw<Edge[]>([]);
 	let viewport = $state.raw<Viewport>({ x: 0, y: 0, zoom: 1 });
+	let campaignName = $state("Untitled campaign");
 
 	const onConnect = (c: Connection) => (edges = addEdge(c, edges));
 
@@ -55,6 +57,7 @@
 		nodes = g.nodes ?? [];
 		edges = g.edges ?? [];
 		viewport = g.viewport ?? viewport;
+		campaignName = g.name ?? campaignName;
 	};
 
 	const saveGraph = async () => {
@@ -67,7 +70,7 @@
 				{
 					method: "PUT",
 					headers: { "content-type": "application/json" },
-					body: JSON.stringify(payload),
+					body: JSON.stringify({ ...payload, name: campaignName }),
 				},
 			);
 			if (!res.ok) throw new Error(await res.text());
@@ -79,7 +82,7 @@
 			method: "POST",
 			headers: { "content-type": "application/json" },
 			body: JSON.stringify({
-				name: "Untitled campaign",
+				name: campaignName,
 				graph_json: payload,
 			}),
 		});
@@ -97,6 +100,11 @@
 </script>
 
 <div class="toolbar">
+	<Input
+		bind:value={campaignName}
+		placeholder="Campaign name"
+		aria-label="Campaign name"
+	/>
 	<Button onclick={addEmailNode}>Add Email</Button>
 	<Button onclick={saveGraph}>Save</Button>
 </div>
@@ -119,7 +127,13 @@
 
 <style>
 	.toolbar {
+		display: flex;
+		gap: 8px;
+		align-items: center;
 		margin-bottom: 8px;
+	}
+	.toolbar :global(input) {
+		max-width: 320px;
 	}
 	.canvas {
 		width: 100%;
