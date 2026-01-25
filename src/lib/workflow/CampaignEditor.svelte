@@ -56,11 +56,14 @@
 		if (!res.ok) throw new Error(await res.text());
 		const g = await res.json();
 
-		console.log(g);
-
-		nodes = g.nodes ?? [];
-		edges = g.edges ?? [];
-		viewport = g.viewport ?? viewport;
+		const graph_json = g.graph_json ?? {
+			nodes: [],
+			edges: [],
+			viewport: viewport,
+		};
+		nodes = graph_json.nodes ?? [];
+		edges = graph_json.edges ?? [];
+		viewport = graph_json.viewport ?? viewport;
 		campaignName = g.name ?? campaignName;
 	};
 
