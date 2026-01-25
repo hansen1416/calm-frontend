@@ -19,6 +19,7 @@
 	import EmailNode from "$lib/workflow/nodes/EmailNode.svelte";
 	import { mode } from "mode-watcher";
 	import { apiFetch } from "$lib/api";
+	import { goto } from "$app/navigation";
 
 	const nodeTypes = { email: EmailNode };
 
@@ -54,6 +55,9 @@
 		const res = await apiFetch(`api/email-campaigns/${campaignId}/graph`);
 		if (!res.ok) throw new Error(await res.text());
 		const g = await res.json();
+
+		console.log(g);
+
 		nodes = g.nodes ?? [];
 		edges = g.edges ?? [];
 		viewport = g.viewport ?? viewport;
@@ -70,7 +74,10 @@
 				{
 					method: "PUT",
 					headers: { "content-type": "application/json" },
-					body: JSON.stringify({ ...payload, name: campaignName }),
+					body: JSON.stringify({
+						graph_json: payload,
+						name: campaignName,
+					}),
 				},
 			);
 			if (!res.ok) throw new Error(await res.text());
@@ -90,7 +97,8 @@
 		const created = await res.json();
 
 		// navigate to /campaigns/{id}
-		location.href = `/campaigns/${created.id}`;
+		// location.href = `/campaigns/${created.id}`;
+		await goto(`/campaigns/${created.id}`);
 	};
 
 	// Svelte 5: load once (or when campaignId changes)
