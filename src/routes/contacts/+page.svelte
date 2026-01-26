@@ -13,6 +13,7 @@
 		CollapsibleContent,
 		CollapsibleTrigger,
 	} from "$lib/components/ui/collapsible";
+	import { goto } from "$app/navigation";
 	import { Label } from "$lib/components/ui/label";
 	import { Textarea } from "$lib/components/ui/textarea";
 	import type { PaginatedContactsResponse } from "$lib/types";
@@ -100,6 +101,12 @@
 				Manage your outreach and keep follow-ups on track.
 			</p>
 		</div>
+		<Button
+			variant="outline"
+			onclick={() => {
+				goto(`/groups`);
+			}}>Manage groups</Button
+		>
 		<Collapsible class="w-full max-w-sm">
 			<CollapsibleTrigger
 				class={buttonVariants({
