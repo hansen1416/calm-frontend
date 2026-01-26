@@ -30,6 +30,9 @@
 	let edges = $state.raw<Edge[]>([]);
 	let viewport = $state.raw<Viewport>({ x: 0, y: 0, zoom: 1 });
 	let campaignName = $state("Untitled campaign");
+	let audienceMode = $state<"include" | "exclude">("include");
+	let audienceKind = $state<"contact" | "group" | "">("contact");
+	let audienceEntityId = $state<string>("");
 
 	const onConnect = (c: Connection) => (edges = addEdge(c, edges));
 
@@ -65,10 +68,22 @@
 		edges = graph_json.edges ?? [];
 		viewport = graph_json.viewport ?? viewport;
 		campaignName = g.name ?? campaignName;
+		audienceMode = g.mode ?? audienceMode;
+		audienceKind = g.kind ?? audienceKind;
+		audienceEntityId =
+			g.entity_id === null || g.entity_id === undefined
+				? ""
+				: String(g.entity_id);
 	};
 
 	const saveGraph = async () => {
 		const payload = { nodes, edges, viewport };
+		const trimmedEntityId = audienceEntityId.trim();
+		const parsedEntityId =
+			trimmedEntityId === "" ? NaN : Number(trimmedEntityId);
+		const entityIdValue = Number.isNaN(parsedEntityId)
+			? null
+			: parsedEntityId;
 
 		// existing campaign: PUT graph
 		if (campaignId) {
@@ -80,6 +95,9 @@
 					body: JSON.stringify({
 						graph_json: payload,
 						name: campaignName,
+						mode: audienceMode,
+						kind: audienceKind,
+						entity_id: entityIdValue,
 					}),
 				},
 			);
@@ -94,6 +112,9 @@
 			body: JSON.stringify({
 				name: campaignName,
 				graph_json: payload,
+				mode: audienceMode,
+				kind: audienceKind,
+				entity_id: entityIdValue,
 			}),
 		});
 		if (!res.ok) throw new Error(await res.text());
@@ -116,6 +137,30 @@
 		placeholder="Campaign name"
 		aria-label="Campaign name"
 	/>
+	<select
+		class="select-input"
+		bind:value={audienceMode}
+		aria-label="Audience mode"
+	>
+		<option value="include">Include</option>
+		<option value="exclude">Exclude</option>
+	</select>
+	<select
+		class="select-input"
+		bind:value={audienceKind}
+		aria-label="Audience kind"
+	>
+		<option value="contact">Contact</option>
+		<option value="group">Group</option>
+	</select>
+	<select
+		class="select-input"
+		bind:value={audienceEntityId}
+		disabled={!audienceKind}
+		aria-label="Audience entity"
+	>
+		<option value="">Select entity</option>
+	</select>
 	<Button onclick={addEmailNode}>Add Email</Button>
 	<Button onclick={saveGraph}>Save</Button>
 </div>
@@ -142,9 +187,25 @@
 		gap: 8px;
 		align-items: center;
 		margin-bottom: 8px;
+		flex-wrap: wrap;
 	}
 	.toolbar :global(input) {
 		max-width: 320px;
+	}
+	.select-input {
+		border: 1px solid hsl(var(--input));
+		background: hsl(var(--background));
+		color: hsl(var(--foreground));
+		border-radius: 6px;
+		height: 36px;
+		padding: 0 12px;
+		font-size: 0.875rem;
+		line-height: 1.25rem;
+		min-width: 140px;
+	}
+	.select-input:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 	.canvas {
 		width: 100%;
