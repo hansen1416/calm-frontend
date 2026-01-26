@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { mode } from "mode-watcher";
+	import { goto } from "$app/navigation";
 	import "@xyflow/svelte/dist/style.css";
 	import {
 		SvelteFlow,
@@ -16,10 +18,9 @@
 	} from "@xyflow/svelte";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
-	import EmailNode from "$lib/workflow/nodes/EmailNode.svelte";
-	import { mode } from "mode-watcher";
+	import * as Select from "$lib/components/ui/select";
 	import { apiFetch } from "$lib/api";
-	import { goto } from "$app/navigation";
+	import EmailNode from "$lib/workflow/nodes/EmailNode.svelte";
 
 	const nodeTypes = { email: EmailNode };
 
@@ -137,30 +138,42 @@
 		placeholder="Campaign name"
 		aria-label="Campaign name"
 	/>
-	<select
-		class="select-input"
-		bind:value={audienceMode}
-		aria-label="Audience mode"
-	>
-		<option value="include">Include</option>
-		<option value="exclude">Exclude</option>
-	</select>
-	<select
-		class="select-input"
-		bind:value={audienceKind}
-		aria-label="Audience kind"
-	>
-		<option value="contact">Contact</option>
-		<option value="group">Group</option>
-	</select>
-	<select
-		class="select-input"
-		bind:value={audienceEntityId}
-		disabled={!audienceKind}
-		aria-label="Audience entity"
-	>
-		<option value="">Select entity</option>
-	</select>
+	<Select.Root bind:value={audienceMode}>
+		<Select.Trigger class="select-input" aria-label="Audience mode">
+			<span data-slot="select-value">
+				{audienceMode === "include" ? "Include" : "Exclude"}
+			</span>
+		</Select.Trigger>
+		<Select.Content>
+			<Select.Item value="include">Include</Select.Item>
+			<Select.Item value="exclude">Exclude</Select.Item>
+		</Select.Content>
+	</Select.Root>
+	<Select.Root bind:value={audienceKind}>
+		<Select.Trigger class="select-input" aria-label="Audience kind">
+			<span data-slot="select-value">
+				{audienceKind === "group"
+					? "Group"
+					: audienceKind === "contact"
+						? "Contact"
+						: "Select kind"}
+			</span>
+		</Select.Trigger>
+		<Select.Content>
+			<Select.Item value="contact">Contact</Select.Item>
+			<Select.Item value="group">Group</Select.Item>
+		</Select.Content>
+	</Select.Root>
+	<Select.Root bind:value={audienceEntityId} disabled={!audienceKind}>
+		<Select.Trigger class="select-input" aria-label="Audience entity">
+			<span data-slot="select-value">
+				{audienceEntityId ? audienceEntityId : "Select entity"}
+			</span>
+		</Select.Trigger>
+		<Select.Content>
+			<Select.Item value="">Select entity</Select.Item>
+		</Select.Content>
+	</Select.Root>
 	<Button onclick={addEmailNode}>Add Email</Button>
 	<Button onclick={saveGraph}>Save</Button>
 </div>
