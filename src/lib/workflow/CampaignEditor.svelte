@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from "svelte";
 	import { mode } from "mode-watcher";
 	import { goto } from "$app/navigation";
 	import "@xyflow/svelte/dist/style.css";
@@ -20,6 +21,10 @@
 	import { Input } from "$lib/components/ui/input";
 	import * as Select from "$lib/components/ui/select";
 	import { apiFetch } from "$lib/api";
+	import type {
+		PaginatedContactsResponse,
+		PaginatedGroupsResponse,
+	} from "$lib/types";
 	import EmailNode from "$lib/workflow/nodes/EmailNode.svelte";
 
 	const nodeTypes = { email: EmailNode };
@@ -34,6 +39,25 @@
 	let audienceMode = $state<"include" | "exclude">("include");
 	let audienceKind = $state<"contact" | "group" | "">("contact");
 	let audienceEntityId = $state<string>("");
+
+	let contactsResponse = $state<PaginatedContactsResponse>({
+		current_page: 0,
+		data: [],
+		from: null,
+		last_page: 0,
+		per_page: 0,
+		to: null,
+		total: 0,
+	});
+	let groupsResponse = $state<PaginatedGroupsResponse>({
+		current_page: 0,
+		data: [],
+		from: null,
+		last_page: 0,
+		per_page: 0,
+		to: null,
+		total: 0,
+	});
 
 	const onConnect = (c: Connection) => (edges = addEdge(c, edges));
 
@@ -75,6 +99,30 @@
 			g.entity_id === null || g.entity_id === undefined
 				? ""
 				: String(g.entity_id);
+	};
+
+	const fetchContacts = async () => {
+		const res = await apiFetch(`api/contacts`, {
+			method: "GET",
+		});
+
+		if (!res.ok) {
+			return;
+		}
+
+		contactsResponse = await res.json();
+	};
+
+	const fetchGroups = async () => {
+		const res = await apiFetch(`api/groups`, {
+			method: "GET",
+		});
+
+		if (!res.ok) {
+			return;
+		}
+
+		groupsResponse = await res.json();
 	};
 
 	const saveGraph = async () => {
@@ -129,6 +177,11 @@
 	// Svelte 5: load once (or when campaignId changes)
 	$effect(() => {
 		loadGraph();
+	});
+
+	onMount(() => {
+		void fetchContacts();
+		void fetchGroups();
 	});
 </script>
 

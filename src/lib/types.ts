@@ -45,6 +45,17 @@ export interface Group {
     updatedAt?: ISODateString;
 }
 
+export interface EmailCampaign {
+    id?: ID;
+    name: string;
+    status: string;
+    mode: string;
+    kind: string;
+    entity_id: ID;
+    createdAt?: ISODateString;
+    updatedAt?: ISODateString;
+}
+
 export type PaginatedContactsResponse = {
     current_page: number;
     data: Contact[];
@@ -71,3 +82,12 @@ export type PaginatedGroupsResponse = {
     total: number;
 };
 
+export type PaginatedEmailCampaignsResponse = {
+    current_page: number;
+    data: EmailCampaign[];
+    from: number | null;
+    last_page: number;
+    per_page: number;
+    to: number | null;
+    total: number;
+};
