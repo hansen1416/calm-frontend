@@ -24,12 +24,13 @@
 	.email-node {
 		min-width: 220px;
 		padding: 10px 12px;
-		border: 1px solid #d7d7d7;
+		border: 1px solid var(--border);
 		border-radius: 12px;
-		background: #fff;
+		background: var(--card);
+		color: var(--card-foreground);
 	}
 	.email-node.selected {
-		outline: 2px solid #222;
+		outline: 2px solid var(--ring);
 	}
 	.title {
 		font-weight: 650;

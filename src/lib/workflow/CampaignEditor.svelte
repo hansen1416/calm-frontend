@@ -229,6 +229,19 @@
 		</Select.Trigger>
 		<Select.Content>
 			<Select.Item value="">Select entity</Select.Item>
+			{#if audienceKind === "contact"}
+				{#each contactsResponse.data as contact}
+					<Select.Item value={String(contact.id)}>
+						{contact.name} ({contact.email})
+					</Select.Item>
+				{/each}
+			{:else if audienceKind === "group"}
+				{#each groupsResponse.data as group}
+					<Select.Item value={String(group.id)}
+						>{group.name}</Select.Item
+					>
+				{/each}
+			{/if}
 		</Select.Content>
 	</Select.Root>
 	<Button onclick={addEmailNode}>Add Email</Button>
