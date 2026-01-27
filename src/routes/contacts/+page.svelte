@@ -51,6 +51,7 @@
 	};
 
 	let isSaving = false;
+	let isSavingTags = false;
 	let isGroupSheetOpen = false;
 	let activeContactId: number | null = null;
 	let selectedGroupsByContact: Record<number, string[]> = {};
@@ -129,6 +130,35 @@
 			...selectedGroupsByContact,
 			[contactId]: nextValue,
 		};
+	};
+
+	const handleSaveTags = async () => {
+		if (!activeContactId) {
+			return;
+		}
+
+		isSavingTags = true;
+
+		try {
+			const res = await apiFetch(`api/contacts/tags`, {
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({
+					contact_id: activeContactId,
+					tags_id: activeContactGroups.map((groupId) =>
+						Number(groupId),
+					),
+				}),
+			});
+
+			if (!res.ok) {
+				return;
+			}
+
+			isGroupSheetOpen = false;
+		} finally {
+			isSavingTags = false;
+		}
 	};
 
 	$: activeContact = activeContactId
@@ -343,6 +373,14 @@
 				{/if}
 			</div>
 			<Sheet.Footer>
+				<Button
+					onclick={handleSaveTags}
+					disabled={isSavingTags ||
+						!activeContactId ||
+						activeContactGroups.length === 0}
+				>
+					{isSavingTags ? "Saving..." : "Save groups"}
+				</Button>
 				<Sheet.Close>
 					<Button variant="outline">Close</Button>
 				</Sheet.Close>
