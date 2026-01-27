@@ -300,7 +300,9 @@
 							>
 						</div>
 						{#if contact.tags?.length}
-							<div class="flex flex-wrap gap-2 pt-2">
+							<div
+								class="flex flex-wrap gap-2 rounded-lg border border-border bg-background px-3 py-2"
+							>
 								{#each contact.tags as tag}
 									<Badge variant="secondary">
 										{tag.name}
