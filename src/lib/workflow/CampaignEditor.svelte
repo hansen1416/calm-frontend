@@ -191,7 +191,7 @@
 		placeholder="Campaign name"
 		aria-label="Campaign name"
 	/>
-	<Select.Root bind:value={audienceMode}>
+	<Select.Root type="single" bind:value={audienceMode}>
 		<Select.Trigger class="select-input" aria-label="Audience mode">
 			<span data-slot="select-value">
 				{audienceMode === "include" ? "Include" : "Exclude"}
@@ -202,7 +202,7 @@
 			<Select.Item value="exclude">Exclude</Select.Item>
 		</Select.Content>
 	</Select.Root>
-	<Select.Root bind:value={audienceKind}>
+	<Select.Root type="single" bind:value={audienceKind}>
 		<Select.Trigger class="select-input" aria-label="Audience kind">
 			<span data-slot="select-value">
 				{audienceKind === "group"
@@ -217,7 +217,11 @@
 			<Select.Item value="group">Group</Select.Item>
 		</Select.Content>
 	</Select.Root>
-	<Select.Root bind:value={audienceEntityId} disabled={!audienceKind}>
+	<Select.Root
+		type="single"
+		bind:value={audienceEntityId}
+		disabled={!audienceKind}
+	>
 		<Select.Trigger class="select-input" aria-label="Audience entity">
 			<span data-slot="select-value">
 				{audienceEntityId ? audienceEntityId : "Select entity"}
