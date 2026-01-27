@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from "svelte";
 	import { Button, buttonVariants } from "$lib/components/ui/button";
 	import {
 		Card,
@@ -14,30 +15,53 @@
 	} from "$lib/components/ui/collapsible";
 	import { Input } from "$lib/components/ui/input";
 	import { Label } from "$lib/components/ui/label";
+	import type { PaginatedGroupsResponse } from "$lib/types";
+	import { apiFetch } from "$lib/api";
 
-	const startingGroups = [
-		{ name: "Friends" },
-		{ name: "Family" },
-		{ name: "Vendors" },
-	];
-
-	let groups = [...startingGroups];
+	let groupsResponse: PaginatedGroupsResponse = {
+		current_page: 0,
+		data: [],
+		from: 0,
+		last_page: 0,
+		per_page: 0,
+		to: 0,
+		total: 0,
+	};
 	let isSaving = false;
 	let formData = {
 		name: "",
 	};
 
-	const handleSubmit = async (e: Event) => {
-		e.preventDefault();
-		if (!formData.name.trim()) {
+	const fetchGroups = async () => {
+		const res = await apiFetch(`api/groups`, {
+			method: "GET",
+		});
+
+		if (!res.ok) {
 			return;
 		}
+
+		groupsResponse = await res.json();
+	};
+
+	const handleSubmit = async (e: Event) => {
+		e.preventDefault();
 
 		isSaving = true;
 
 		try {
-			groups = [...groups, { name: formData.name.trim() }];
-			formData = { name: "" };
+			const res = await apiFetch(`api/groups`, {
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify(formData),
+			});
+
+			if (!res.ok) {
+				return;
+			}
+
+			handleReset();
+			await fetchGroups();
 		} finally {
 			isSaving = false;
 		}
@@ -54,6 +78,8 @@
 	const onDelete = (idx: number) => {
 		console.log(idx);
 	};
+
+	onMount(fetchGroups);
 </script>
 
 <main class="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6 pb-12 pt-14">
@@ -114,18 +140,18 @@
 			<div class="space-y-1">
 				<CardTitle>All groups</CardTitle>
 				<CardDescription>
-					{groups.length} total groups in this workspace.
+					{groupsResponse.total} total groups in this workspace.
 				</CardDescription>
 			</div>
 			<span
 				class="rounded-full bg-muted px-3 py-1 text-sm font-semibold text-foreground"
 			>
-				{groups.length}
+				{groupsResponse.total} total groups in this workspace.
 			</span>
 		</CardHeader>
 		<CardContent>
 			<ul class="space-y-3">
-				{#each groups as group, i}
+				{#each groupsResponse.data as group, i}
 					<li
 						class="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-muted px-5 py-4"
 					>

@@ -38,6 +38,12 @@ export interface Contact {
     updatedAt?: ISODateString;
 }
 
+export interface Group {
+    id: ID;
+    name: string;
+    createdAt?: ISODateString;
+    updatedAt?: ISODateString;
+}
 
 export type PaginatedContactsResponse = {
     current_page: number;
@@ -55,4 +61,13 @@ export type PaginatedContactsResponse = {
     total: number;
 };
 
+export type PaginatedGroupsResponse = {
+    current_page: number;
+    data: Group[];
+    from: number | null;
+    last_page: number;
+    per_page: number;
+    to: number | null;
+    total: number;
+};
 
