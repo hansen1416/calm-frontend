@@ -16,6 +16,7 @@
 	import { goto } from "$app/navigation";
 	import { Label } from "$lib/components/ui/label";
 	import { Textarea } from "$lib/components/ui/textarea";
+	import { Badge } from "$lib/components/ui/badge";
 	import * as Sheet from "$lib/components/ui/sheet";
 	import {
 		ToggleGroup,
@@ -298,6 +299,15 @@
 								>{contact.email}</a
 							>
 						</div>
+						{#if contact.tags?.length}
+							<div class="flex flex-wrap gap-2 pt-2">
+								{#each contact.tags as tag}
+									<Badge variant="secondary">
+										{tag.name}
+									</Badge>
+								{/each}
+							</div>
+						{/if}
 						<div class="flex flex-wrap gap-2">
 							<Button
 								variant="outline"
