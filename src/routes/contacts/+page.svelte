@@ -16,7 +16,15 @@
 	import { goto } from "$app/navigation";
 	import { Label } from "$lib/components/ui/label";
 	import { Textarea } from "$lib/components/ui/textarea";
-	import type { PaginatedContactsResponse } from "$lib/types";
+	import * as Sheet from "$lib/components/ui/sheet";
+	import {
+		ToggleGroup,
+		ToggleGroupItem,
+	} from "$lib/components/ui/toggle-group";
+	import type {
+		PaginatedContactsResponse,
+		PaginatedGroupsResponse,
+	} from "$lib/types";
 	import { apiFetch } from "$lib/api";
 
 	const inputClass =
@@ -32,7 +40,20 @@
 		total: 0,
 	};
 
+	let groupsResponse: PaginatedGroupsResponse = {
+		current_page: 0,
+		data: [],
+		from: 0,
+		last_page: 0,
+		per_page: 0,
+		to: 0,
+		total: 0,
+	};
+
 	let isSaving = false;
+	let isGroupSheetOpen = false;
+	let activeContactId: number | null = null;
+	let selectedGroupsByContact: Record<number, string[]> = {};
 
 	let formData = {
 		name: "",
@@ -50,6 +71,18 @@
 		}
 
 		contactsResponse = await res.json();
+	};
+
+	const fetchGroups = async () => {
+		const res = await apiFetch(`api/groups`, {
+			method: "GET",
+		});
+
+		if (!res.ok) {
+			return;
+		}
+
+		groupsResponse = await res.json();
 	};
 
 	const handleSubmit = async (e: Event) => {
@@ -82,7 +115,36 @@
 		};
 	};
 
-	onMount(fetchContacts);
+	const openGroupSheet = (contactId: number) => {
+		activeContactId = contactId;
+		isGroupSheetOpen = true;
+	};
+
+	const handleGroupSelection = (
+		contactId: number,
+		value: string[] | string,
+	) => {
+		const nextValue = Array.isArray(value) ? value : value ? [value] : [];
+		selectedGroupsByContact = {
+			...selectedGroupsByContact,
+			[contactId]: nextValue,
+		};
+	};
+
+	$: activeContact = activeContactId
+		? (contactsResponse.data.find(
+				(contact) => contact.id === activeContactId,
+			) ?? null)
+		: null;
+
+	$: activeContactGroups = activeContactId
+		? (selectedGroupsByContact[activeContactId] ?? [])
+		: [];
+
+	onMount(() => {
+		void fetchContacts();
+		void fetchGroups();
+	});
 
 	const onEdit = (idx: number) => {
 		console.log(idx);
@@ -210,6 +272,13 @@
 							<Button
 								variant="outline"
 								size="sm"
+								onclick={() => openGroupSheet(contact.id)}
+							>
+								Groups
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
 								onclick={() => onEdit(i)}
 							>
 								Edit
@@ -227,4 +296,57 @@
 			</ul>
 		</CardContent>
 	</Card>
+	<Sheet.Root
+		bind:open={isGroupSheetOpen}
+		onOpenChange={(open) => {
+			if (!open) {
+				isGroupSheetOpen = false;
+				activeContactId = null;
+			}
+		}}
+	>
+		<Sheet.Content class="flex flex-col gap-6">
+			<Sheet.Header>
+				<Sheet.Title>Assign groups</Sheet.Title>
+				<Sheet.Description>
+					{#if activeContact}
+						Update groups for {activeContact.name}.
+					{:else}
+						Select the groups that best match this contact.
+					{/if}
+				</Sheet.Description>
+			</Sheet.Header>
+			<div class="space-y-3">
+				<p class="text-sm font-medium text-foreground">
+					Available groups
+				</p>
+				{#if groupsResponse.data.length === 0}
+					<p class="text-sm text-muted-foreground">
+						Create a group first to start organizing contacts.
+					</p>
+				{:else}
+					<ToggleGroup
+						type="multiple"
+						value={activeContactGroups}
+						onValueChange={(value) => {
+							if (activeContactId) {
+								handleGroupSelection(activeContactId, value);
+							}
+						}}
+					>
+						{#each groupsResponse.data as group}
+							<ToggleGroupItem value={`${group.id}`}>
+								{group.name}
+							</ToggleGroupItem>
+						{/each}
+					</ToggleGroup>
+				{/if}
+			</div>
+			<Sheet.Footer>
+				<Sheet.Close>
+					<Button variant="outline">Close</Button>
+				</Sheet.Close>
+			</Sheet.Footer>
+		</Sheet.Content>
+	</Sheet.Root>
 </main>
