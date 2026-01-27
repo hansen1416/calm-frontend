@@ -59,7 +59,8 @@
 		total: 0,
 	});
 
-	const onConnect = (c: Connection) => (edges = addEdge(c, edges));
+	const onConnect = (c: Connection) =>
+		(edges = addEdge({ ...c, label: c.sourceHandle ?? undefined }, edges));
 
 	const addEmailNode = () => {
 		const id = crypto.randomUUID();

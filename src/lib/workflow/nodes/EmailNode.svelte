@@ -17,11 +17,31 @@
 
 	<!-- inbound / outbound -->
 	<Handle type="target" position={Position.Left} id="in" />
-	<Handle type="source" position={Position.Right} id="out" />
+	<div class="event-handles">
+		<div class="event-handle event-clicked">
+			<span class="event-label">Clicked</span>
+			<Handle
+				type="source"
+				position={Position.Right}
+				id="clicked"
+				style="position: relative;"
+			/>
+		</div>
+		<div class="event-handle event-read">
+			<span class="event-label">Read</span>
+			<Handle
+				type="source"
+				position={Position.Right}
+				id="read"
+				style="position: relative;"
+			/>
+		</div>
+	</div>
 </div>
 
 <style>
 	.email-node {
+		position: relative;
 		min-width: 220px;
 		padding: 10px 12px;
 		border: 1px solid var(--border);
@@ -55,5 +75,31 @@
 		margin-top: 6px;
 		font-size: 12px;
 		opacity: 0.8;
+	}
+
+	.event-handles {
+		position: absolute;
+		right: -2px;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+	.event-handle {
+		position: absolute;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 11px;
+		color: #4b5563;
+	}
+	.event-clicked {
+		top: -16px;
+	}
+	.event-read {
+		top: 16px;
+	}
+	.event-label {
+		background: #f3f4f6;
+		border-radius: 999px;
+		padding: 2px 6px;
 	}
 </style>
