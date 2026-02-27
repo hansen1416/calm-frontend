@@ -257,6 +257,8 @@
 		{nodeTypes}
 		fitView
 		onconnect={onConnect}
+		nodesDraggable={false}
+		nodesConnectable={true}
 		class={mode.current === "dark" ? "dark" : ""}
 	>
 		<Background />

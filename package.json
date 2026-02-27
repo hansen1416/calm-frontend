@@ -18,6 +18,7 @@
 		"@sveltejs/kit": "^2.49.1",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
 		"@tailwindcss/vite": "^4.1.17",
+		"@types/dagre": "^0.7.53",
 		"bits-ui": "^2.15.4",
 		"clsx": "^2.1.1",
 		"svelte": "^5.45.6",
@@ -30,6 +31,7 @@
 		"vite": "^7.2.6"
 	},
 	"dependencies": {
+		"@dagrejs/dagre": "^2.0.4",
 		"@xyflow/svelte": "^1.5.0",
 		"mode-watcher": "^1.1.0"
 	}
